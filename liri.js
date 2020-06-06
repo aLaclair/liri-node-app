@@ -8,6 +8,10 @@ var axios = require('axios')
 
 var moment = require('moment')
 
+var Spotify = require('node-spotify-api')
+var spotify = new Spotify(keys.spotify)
+
+
 
 const search = process.argv[2]
 
@@ -41,9 +45,34 @@ switch (search) {
 
         break;
 
-    case 'spotify-this-song':
 
+
+    case 'spotify-this-song':
+        spotify.search({ type: 'track', query: query, limit: 1 }, function(err, data) {
+            if (err) {
+              return console.log('Error occurred: ' + err);
+            }
+           
+            let album = data.tracks.items[0]
+            let artists = []
+
+            console.log(('----------------------------------'))
+            for (let i = 0; i < album.artists.length; i++) {
+                artists.push(' ' + album.artists[i].name)
+            }
+            console.log('Artist(s):' + artists)
+            console.log('Song Name: ' + album.name)
+            if (album.preview_url !== null) {
+            console.log('Preview: ' + album.preview_url)
+            } else {
+                console.log('Preview: No preview. Blame Spotify, not me.')
+            }
+            console.log('Album Name: ' + album.album.name)
+            console.log((('----------------------------------')))
+          });
     break;
+
+
 
     case 'movie-this':
 
